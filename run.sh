@@ -44,11 +44,13 @@ EOF
 }
 
 for c in checks.d/*; do
+	[ ! -x "$c" ] && continue
+
 	n="`basename "$c"`"
 	f="failing/$n"
 
 	set +e
-	out="`sh "$c" 2>&1`"
+	out="`"$c" 2>&1`"
 	code=$?
 	set -e
 
