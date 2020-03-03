@@ -11,8 +11,8 @@ cd "`dirname "$0"`"
 
 pushbullet()
 {
-	title="`echo $1 | jq -aR .`"
-	body="`echo "$2" | jq -aR .`"
+	title="`echo $1 | tr -d '\n' | jq -aR .`"
+	body="`echo "$2" | jq -aRs .`"
 
 	curl \
 		--silent \
