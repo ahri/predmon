@@ -56,11 +56,11 @@ for c in checks.d/*; do
 
 	if [ $code -ne 0 ]; then
 		if [ ! -f "$f" ]; then
-			alert "Down: $n" "$out"
+			alert "Failing: $n" "$out"
 			touch "$f"
 		fi
 	elif [ -f "$f" ]; then
-		alert "Up: $n" "$out"
+		alert "Passing: $n" "$out"
 		rm -f "$f"
 	fi
 done
