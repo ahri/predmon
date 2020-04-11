@@ -50,7 +50,7 @@ for c in checks.d/*; do
 	f="failing/$n"
 
 	set +e
-	out="`"$c" 2>&1`"
+	out="`(cd checks.d && ./"$n" 2>&1)`"
 	code=$?
 	set -e
 
