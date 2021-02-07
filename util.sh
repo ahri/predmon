@@ -39,13 +39,12 @@ disk_free_above_percentage()
 	mount_point="$1"
 	min_free_percentage="$2"
 
-	percent_used=`df -h | awk -vmount="$mount_point" '$6 == mount { sub(/%/, "", $5); print $5 }'`
-	if [ -z "$percent_used" ]; then
+	percentage_free=`df -h | awk -vmount="$mount_point" '$6 == mount { sub(/%/, "", $5); print 100-$5 }'`
+	if [ -z "$percentage_free" ]; then
 		echo "Could not find mount point $mount_point"
 		return 1
 	fi
 
-	percentage_free=`expr 100 - $percent_used`
 	if [ $percentage_free -lt $min_free_percentage ]; then
 		echo "$mount_point has only $percentage_free% disk space left"
 		return 1
