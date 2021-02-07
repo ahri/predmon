@@ -12,12 +12,12 @@ websites_up()
 			url="$1"
 			shift
                         http_status=`curl -Is -o /dev/null -w '%{http_code}' "$url"`
-                        if [ `echo "$http_status" | wc -l` -ne 1 ] || ! echo "$http_status" | grep -q "^[1-4][0-9][0-9]$"; then
-				echo -n "$url"
-				if [ ! -z "$http_status" ]; then
-					echo -n " [$http_status]"
-				fi
-				echo
+			curl_exit=$?
+			if [ $curl_exit -ne 0 ]; then
+				echo "$url [tcp/tls error]"
+				code=1
+			elif ! echo "$http_status" | grep -q "^[1-4][0-9][0-9]$"; then
+				echo "$url [$http_status]"
 				code=1
 			fi
 		done
