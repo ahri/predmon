@@ -11,8 +11,13 @@ websites_up()
 		while [ $# -gt 0 ]; do
 			url="$1"
 			shift
-			if ! curl -Ifs -o /dev/null "$url"; then
-				echo "$url"
+                        http_status=`curl -Is -o /dev/null -w '%{http_code}' "$url"`
+                        if [ `echo "$http_status" | wc -l` -ne 1 ] || ! echo "$http_status" | grep -q "^[1-4][0-9][0-9]$"; then
+				echo -n "$url"
+				if [ ! -z "$http_status" ]; then
+					echo -n " [$http_status]"
+				fi
+				echo
 				code=1
 			fi
 		done
