@@ -1,7 +1,7 @@
 #!/bin/sh
-set -ue
+set -uex
 
-for dep in curl jq; do
+for dep in curl jq hostname; do
 	err=0
 	if ! command -v "$dep" > /dev/null; then
 		err=1
@@ -21,9 +21,16 @@ fi
 pushbullet_token=$1
 cd "`dirname "$0"`"
 
+hostname=`hostname`
+
 pushbullet()
 {
-	title="`echo $1 | tr -d '\n' | jq -aR .`"
+	if [ -z "$hostname" ]; then
+		title_prefix=""
+	else
+		title_prefix="[$hostname] "
+	fi
+	title="`echo "$title_prefix$1" | tr -d '\n' | jq -aR .`"
 	body="`echo "$2" | jq -aRs .`"
 
 	curl \
