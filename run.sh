@@ -1,6 +1,18 @@
 #!/bin/sh
 set -ue
 
+for dep in curl jq; do
+	err=0
+	if ! command -v "$dep" > /dev/null; then
+		err=1
+		echo "Missing dependency: $dep" 1>&2
+	fi
+
+	if [ $err -ne 0 ]; then
+		exit $err
+	fi
+done
+
 if [ $# -ne 1 ]; then
 	echo "Provide Pushbullet api token" 1>&2
 	exit 1
