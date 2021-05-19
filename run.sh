@@ -1,5 +1,5 @@
 #!/bin/sh
-set -uex
+set -ue
 
 for dep in curl jq hostname; do
 	err=0
