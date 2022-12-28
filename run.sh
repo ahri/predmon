@@ -71,11 +71,11 @@ write_state()
 		echo "{}" > state.json
 	fi
 
-	git reset --hard "origin/`git branch --show-current`"
-	git pull
+	git reset -q --hard "origin/`git branch --show-current`"
+	git pull -q
 	echo "`jq ".$hostname = $json" state.json`" > state.json
-	git commit state.json -m new_state && git push
-	cd -
+	git commit -q state.json -m new_state && git push -q
+	cd - > /dev/null
 }
 
 json_state="{"
@@ -109,5 +109,5 @@ done
 
 if [ -d central ]; then
 	json_state="`echo "$json_state" | sed 's/,$//'`}"
-	write_state "$json_state" > /dev/null
+	write_state "$json_state"
 fi
