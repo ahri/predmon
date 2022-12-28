@@ -110,5 +110,5 @@ done
 
 if [ -d central ]; then
 	json_state="`echo "$json_state" | sed 's/,$//'`}"
-	write_state "$json_state"
+	write_state "$json_state" > /dev/null
 fi
