@@ -26,12 +26,12 @@ hostname=`hostname`
 pushbullet()
 {
 	if [ -z "$hostname" ]; then
-		title_prefix=""
+		local title_prefix=""
 	else
-		title_prefix="[$hostname] "
+		local title_prefix="[$hostname] "
 	fi
-	title="`echo "$title_prefix$1" | tr -d '\n' | jq -aR .`"
-	body="`echo "$2" | jq -aRs .`"
+	local title="`echo "$title_prefix$1" | tr -d '\n' | jq -aR .`"
+	local body="`echo "$2" | jq -aRs .`"
 
 	curl \
 		--silent \
@@ -46,12 +46,12 @@ pushbullet()
 
 alert()
 {
-	title=$1
-	body="$2"
+	local title=$1
+	local body="$2"
 
 	set +e
 	out="`pushbullet "$title" "$body" 2>&1`"
-	code=$?
+	local code=$?
 	set -e
 
 	if [ $code -ne 0 ]; then
