@@ -62,6 +62,24 @@ EOF
 	fi
 }
 
+write_state()
+{
+	local json="$1"
+
+	cd central
+	if [ ! -f state.json ]; then
+		echo "{}" > state.json
+	fi
+
+	git reset --hard "origin/`git branch --show-current`"
+	git pull
+	echo "`jq ".$hostname = $json" state.json`" > state.json
+	git add .
+	git commit -am new_state && git push
+	cd -
+}
+
+json_state="{"
 for c in checks.d/*; do
 	[ ! -x "$c" ] && continue
 
@@ -73,13 +91,24 @@ for c in checks.d/*; do
 	code=$?
 	set -e
 
+	json_state="$json_state `echo $n | jq -aR .`:"
 	if [ $code -ne 0 ]; then
 		if [ ! -f "$f" ]; then
 			alert "Failing: $n" "$out"
 			touch "$f"
 		fi
+		json_state="$json_state false,"
 	elif [ -f "$f" ]; then
 		alert "Passing: $n" "$out"
 		rm -f "$f"
+		json_state="$json_state true,"
+	else
+		json_state="$json_state true,"
 	fi
 done
+
+
+if [ -d central ]; then
+	json_state="`echo "$json_state" | sed 's/,$//'`}"
+	write_state "$json_state"
+fi

@@ -25,4 +25,8 @@ If a script fails (with a non-zero exit code) then you'll be informed via
 PushBullet. If your script outputs then that content will be sent along.
 
 You'll be updated again when it starts passing.
+
+If you want to update a central state, add a git repo that is configured and
+can be pushed as $dirname/central - this will be updated only when the state
+changes.
 INSTRUCTIONS
