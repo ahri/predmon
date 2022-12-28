@@ -74,7 +74,7 @@ write_state()
 	git reset -q --hard "origin/`git branch --show-current`"
 	git pull -q
 	echo "`jq ".$hostname = $json" state.json`" > state.json
-	git commit -q state.json -m new_state && git push -q
+	git commit -q state.json -m new_state > /dev/null && git push -q
 	cd - > /dev/null
 }
 
