@@ -5,13 +5,13 @@ websites_up()
 		return 1
 	fi
 
-	if curl -Ifs -o /dev/null https://google.com; then
+	if curl -m 1 -Ifs -o /dev/null https://google.com; then
 		code=0
 		set +e
 		while [ $# -gt 0 ]; do
 			url="$1"
 			shift
-                        http_status=`curl -Is -o /dev/null -w '%{http_code}' "$url"`
+                        http_status=`curl -m 2 -Is -o /dev/null -w '%{http_code}' "$url"`
 			curl_exit=$?
 			if [ $curl_exit -ne 0 ]; then
 				echo "$url [tcp/tls error]"
