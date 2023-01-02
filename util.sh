@@ -50,3 +50,29 @@ disk_free_above_percentage()
 		return 1
 	fi
 }
+
+file_younger_than()
+{
+	if [ $# -ne 2 ]; then
+		echo "Provide file and max_age_mins"
+		return 1
+	fi
+
+	file="$1"
+	max_age_mins=$2
+	
+	now=`date +%s`
+	last_written=`date -r "$file" +%s`
+
+	if [ -z "$last_written" ]; then
+		echo "No last_finished time" 1>&2
+		return 1
+	fi
+
+	age_mins=`expr \( $now - $last_written \) / 60`
+
+	if [ $age_mins -gt $max_age_mins ]; then
+		echo "Age of '$file' is older than $max_age_mins mins"
+		return 1
+	fi
+}
