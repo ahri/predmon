@@ -71,10 +71,13 @@ write_state()
 		echo "{}" > state.json
 	fi
 
-	git reset -q --hard "origin/`git branch --show-current`"
-	git pull -q
-	echo "`jq --sort-keys ".$hostname = $json" state.json`" > state.json
-	git commit -q state.json -m new_state > /dev/null && git push -q
+	for i in 1 2 3; do
+		git reset -q --hard "origin/`git branch --show-current`"
+		git pull -q
+		echo "`jq --sort-keys ".$hostname = $json" state.json`" > state.json
+		git commit -q state.json -m new_state > /dev/null
+		git push -q 2> /dev/null || true
+	done
 	cd - > /dev/null
 }
 
