@@ -46,8 +46,6 @@ pushbullet()
 
 alert()
 {
-	return
-
 	title=$1
 	body="$2"
 

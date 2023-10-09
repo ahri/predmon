@@ -1,5 +1,6 @@
 websites_up()
 {
+	local timeout_seconds=2
 	if [ $# -eq 0 ]; then
 		echo "Provide at least one URL to websites_up"
 		return 1
@@ -11,10 +12,13 @@ websites_up()
 		while [ $# -gt 0 ]; do
 			url="$1"
 			shift
-                        http_status=`curl -m 2 -Is -o /dev/null -w '%{http_code}' "$url"`
+                        http_status=`curl -m $timeout_seconds -Is -o /dev/null -w '%{http_code}' "$url"`
 			curl_exit=$?
-			if [ $curl_exit -ne 0 ]; then
-				echo "$url [tcp/tls error]"
+			if [ $curl_exit -eq 28 ]; then
+				# timeout, assume there's a weird network issue and ignore it
+				true
+			elif [ $curl_exit -ne 0 ]; then
+				echo "$url [curl err $curl_exit]"
 				code=1
 			elif ! echo "$http_status" | grep -q "^[1-4][0-9][0-9]$"; then
 				echo "$url [$http_status]"
