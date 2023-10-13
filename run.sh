@@ -93,6 +93,11 @@ for c in checks.d/*; do
 	code=$?
 	set -e
 
+	if [ $code -eq 126 ]; then
+		# couldn't execute this time, so skip
+		continue
+	fi
+
 	json_state="$json_state `echo $n | jq -aR .`:"
 	if [ $code -ne 0 ]; then
 		if [ ! -f "$f" ]; then
