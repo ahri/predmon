@@ -12,18 +12,21 @@ websites_up()
 		while [ $# -gt 0 ]; do
 			url="$1"
 			shift
-                        http_status=`curl -m $timeout_seconds -Is -o /dev/null -w '%{http_code}' "$url"`
-			curl_exit=$?
-			if [ $curl_exit -eq 28 ]; then
-				# timeout, assume there's a weird network issue and ignore it
-				true
-			elif [ $curl_exit -ne 0 ]; then
-				echo "$url [curl err $curl_exit]"
-				code=1
-			elif ! echo "$http_status" | grep -q "^[1-4][0-9][0-9]$"; then
-				echo "$url [$http_status]"
-				code=1
-			fi
+			for i in {1..5}; do
+				http_status=`curl -m $timeout_seconds -Is -o /dev/null -w '%{http_code}' "$url"`
+				curl_exit=$?
+				if [ $curl_exit -eq 28 ]; then
+					# timeout, assume there's a weird network issue and try again
+					continue
+				elif [ $curl_exit -ne 0 ]; then
+					echo "$url [curl err $curl_exit]"
+					code=1
+				elif ! echo "$http_status" | grep -q "^[1-4][0-9][0-9]$"; then
+					echo "$url [$http_status]"
+					code=1
+				fi
+				break
+			done
 		done
 		set -e
 
