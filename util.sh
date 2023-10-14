@@ -16,7 +16,7 @@ websites_up()
 			curl_exit=$?
 			if [ $curl_exit -eq 28 ]; then
 				# timeout, assume there's a weird network issue and ignore it
-				code=126
+				true
 			elif [ $curl_exit -ne 0 ]; then
 				echo "$url [curl err $curl_exit]"
 				code=1
