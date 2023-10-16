@@ -6,35 +6,31 @@ websites_up()
 		return 1
 	fi
 
-	if curl -m 1 -Ifs -o /dev/null https://google.com; then
-		code=0
-		set +e
-		while [ $# -gt 0 ]; do
-			url="$1"
-			shift
-			for i in {1..5}; do
-				http_status=`curl -m $timeout_seconds -Is -o /dev/null -w '%{http_code}' "$url"`
-				curl_exit=$?
-				if [ $curl_exit -eq 28 ]; then
-					# timeout, assume there's a weird network issue and try again
-					code=1
-					continue
-				elif [ $curl_exit -ne 0 ]; then
-					echo "$url [curl err $curl_exit]"
-					code=1
-				elif ! echo "$http_status" | grep -q "^[1-4][0-9][0-9]$"; then
-					echo "$url [$http_status]"
-					code=1
-				fi
-				break
-			done
+	code=0
+	set +e
+	while [ $# -gt 0 ]; do
+		url="$1"
+		shift
+		for i in {1..5}; do
+			http_status=`curl -m $timeout_seconds -Is -o /dev/null -w '%{http_code}' "$url"`
+			curl_exit=$?
+			if [ $curl_exit -eq 28 ]; then
+				# timeout, assume there's a weird network issue and try again
+				code=1
+				continue
+			elif [ $curl_exit -ne 0 ]; then
+				echo "$url [curl err $curl_exit]"
+				code=1
+			elif ! echo "$http_status" | grep -q "^[1-4][0-9][0-9]$"; then
+				echo "$url [$http_status]"
+				code=1
+			fi
+			break
 		done
-		set -e
+	done
+	set -e
 
-		return $code
-	else
-		return 0
-	fi
+	return $code
 }
 
 disk_free_above_percentage()
