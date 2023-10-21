@@ -1,6 +1,8 @@
 websites_up()
 {
 	local timeout_seconds=2
+	local timeout_retries=10
+
 	if [ $# -eq 0 ]; then
 		echo "Provide at least one URL to websites_up"
 		return 1
@@ -11,7 +13,7 @@ websites_up()
 	while [ $# -gt 0 ]; do
 		url="$1"
 		shift
-		for i in {1..5}; do
+		for i in {1..$timeout_retries}; do
 			http_status=`curl -m $timeout_seconds -Is -o /dev/null -w '%{http_code}' "$url"`
 			curl_exit=$?
 			if [ $curl_exit -eq 28 ]; then
