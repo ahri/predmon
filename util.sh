@@ -1,7 +1,7 @@
 website_up()
 {
-	local timeout_seconds=2
-	local timeout_retries=10
+	local timeout_seconds=1
+	local timeout_retries=5
 
 	if [ $# -ne 1 ]; then
 		echo "Provide a URL to website_up"
